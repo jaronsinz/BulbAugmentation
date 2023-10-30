@@ -17,14 +17,26 @@ img_green_bulb = cv2.imread("bulb_images/green_bulb.png", cv2.IMREAD_UNCHANGED)
 
 #choosing random bulb to overlay
 bulb_list = [img_red_bulb, img_yellow_bulb, img_green_bulb]
-random_number = random.randint(0, 2)
+random_image = bulb_list[random.randint(0, 2)]
 
 #getting position to overlay from label_file
 coordinates = label_file["openlabel"]["frames"]["0"]["objects"]["12345678-1234-1234-1234-123456789123"]["object_data"]["bbox"][0]["val"]
 
+#calculating size of bulb
+height_original, width_original, c = img_original.shape
+
+bulb_width = int((width_original*coordinates[2])-(width_original*coordinates[0]))
+bulb_height = int((height_original*coordinates[3])-(height_original*coordinates[1]))
+new_bulb_dim = (bulb_width, bulb_height)
+print(new_bulb_dim)
+
+#resizing image
+print(random_image.shape)
+resized_image = cv2.resize(random_image, new_bulb_dim)
+print(resized_image.shape)
+
 #overlaying image
-img_result = cvzone.overlayPNG(img_original, bulb_list[random_number], [0, 0])
-#down_points = (2000, 2000)
+img_result = cvzone.overlayPNG(img_original, resized_image, [420, 145])
 
 #img_result = cvzone.overlayPNG(img_original, img_red_bulb, [0, 0])
 
