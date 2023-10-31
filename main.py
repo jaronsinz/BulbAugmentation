@@ -4,42 +4,54 @@ import cvzone
 import random
 import json
 
-#reading json
+#reading label file
 with open("input/labels/test_json.json", "r") as file_path:
     label_file = json.load(file_path)
 
-#reading all images
-img_original = cv2.imread("input/images/background_test.jpg")
+#reading all overlay bulbs
 img_red_bulb = cv2.imread("bulb_images/red_bulb.png", cv2.IMREAD_UNCHANGED)
-#img_red_bulb = cv2.resize(img_red_bulb, down_points, interpolation= cv2.INTER_LINEAR)
 img_yellow_bulb = cv2.imread("bulb_images/yellow_bulb.png", cv2.IMREAD_UNCHANGED)
 img_green_bulb = cv2.imread("bulb_images/green_bulb.png", cv2.IMREAD_UNCHANGED)
+bulb_list = [img_red_bulb, img_yellow_bulb, img_green_bulb]     #adjust depending on number of bulb images
 
-#choosing random bulb to overlay
-bulb_list = [img_red_bulb, img_yellow_bulb, img_green_bulb]
-random_image = bulb_list[random.randint(0, 2)]
+#loop through all images
+for image in label_file["openlabel"]["frames"]:
+    #reading current image
+    img_original_name = label_file["openlabel"]["frames"][image]["frame_properties"]["streams"]["FC1"]["uri"]
+    img_original = cv2.imread(f"input/images/{img_original_name}")
 
-#getting position to overlay from label_file
-coordinates = label_file["openlabel"]["frames"]["0"]["objects"]["12345678-1234-1234-1234-123456789123"]["object_data"]["bbox"][0]["val"]
+    #getting dimensions of original image
+    height_original, width_original, c = img_original.shape
+    
+    #loop through all inactive bulbs
+    for inactive_bulb in label_file["openlabel"]["frames"]["0"]["objects"]:
+        #choosing randomly which bulb to overlay
+        overlay_bool = random.choice([True, False])                    #add False after loop is done
+        if(overlay_bool):
+            #choosing random bulb to overlay
+            random_overlay_bulb = bulb_list[random.randint(0, 2)]      #adjust depending on number of bulb images
+            
+            #getting position to overlay from label_file
+            coordinates = label_file["openlabel"]["frames"][image]["objects"][inactive_bulb]["object_data"]["bbox"][0]["val"]
+            
+            #calculating size of bulb
+            width_start = int(width_original*coordinates[0])
+            height_start = int(height_original*coordinates[1])
+            width_end = int(width_original*coordinates[2])
+            height_end = int(height_original*coordinates[3])
 
-#calculating size of bulb
-height_original, width_original, c = img_original.shape
+            bulb_width = width_end-width_start
+            bulb_height = height_end-height_start
+            new_bulb_dim = (bulb_width, bulb_height)
 
-bulb_width = int((width_original*coordinates[2])-(width_original*coordinates[0]))
-bulb_height = int((height_original*coordinates[3])-(height_original*coordinates[1]))
-new_bulb_dim = (bulb_width, bulb_height)
-print(new_bulb_dim)
+            #resizing overlay bulb 
+            resized_overlay_bulb = cv2.resize(random_overlay_bulb, new_bulb_dim)
 
-#resizing image
-print(random_image.shape)
-resized_image = cv2.resize(random_image, new_bulb_dim)
-print(resized_image.shape)
+            #overlaying image
+            img_original = cvzone.overlayPNG(img_original, resized_overlay_bulb, [width_start, height_start])
 
-#overlaying image
-img_result = cvzone.overlayPNG(img_original, resized_image, [420, 145])
 
-#img_result = cvzone.overlayPNG(img_original, img_red_bulb, [0, 0])
+
 
 cv2.imshow("Image", img_original)
-cv2.imshow("Image", img_result)
 cv2.waitKey(0)

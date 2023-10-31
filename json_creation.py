@@ -50,13 +50,74 @@ test_json["openlabel"]["frames"]["0"]["objects"]["12345678-1234-1234-1234-123456
             "name": "bbox-12345678",
             "val": [
                 0.42,
-                0.145,
+                0.134,
                 0.58,
-                0.3
+                0.28
             ]
         }
     ],
-    "boolean": []
+    "boolean": [],
+    "text": []
+}
+test_json["openlabel"]["frames"]["0"]["objects"]["12345678-1234-1234-1234-123456789124"] = {}
+test_json["openlabel"]["frames"]["0"]["objects"]["12345678-1234-1234-1234-123456789124"]["object_data"] = {
+    "bbox": [
+        {
+            "attributes": {
+                "boolean": [
+                    {
+                        "name": "interpolated",
+                        "val": False
+                    }
+                ],
+                "text": [
+                    {
+                        "name": "stream",
+                        "val": "FC1"
+                    }
+                ]
+            },
+            "name": "bbox-12345679",
+            "val": [
+                0.42,
+                0.307,
+                0.58,
+                0.453
+            ]
+        }
+    ],
+    "boolean": [],
+    "text": []
+}
+test_json["openlabel"]["frames"]["0"]["objects"]["12345678-1234-1234-1234-123456789125"] = {}
+test_json["openlabel"]["frames"]["0"]["objects"]["12345678-1234-1234-1234-123456789125"]["object_data"] = {
+    "bbox": [
+        {
+            "attributes": {
+                "boolean": [
+                    {
+                        "name": "interpolated",
+                        "val": False
+                    }
+                ],
+                "text": [
+                    {
+                        "name": "stream",
+                        "val": "FC1"
+                    }
+                ]
+            },
+            "name": "bbox-12345689",
+            "val": [
+                0.42,
+                0.480,
+                0.58,
+                0.626
+            ]
+        }
+    ],
+    "boolean": [],
+    "text": []
 }
 with open(output_path, "w") as file_path:
     json.dump(test_json, file_path)
