@@ -17,8 +17,12 @@ bulb_list = [img_red_bulb, img_yellow_bulb, img_green_bulb]     #adjust dependin
 #loop through all images
 for image in label_file["openlabel"]["frames"]:
     #reading current image
-    img_original_name = label_file["openlabel"]["frames"][image]["frame_properties"]["streams"]["FC1"]["uri"]
-    img_original = cv2.imread(f"input/images/{img_original_name}")
+    img_original_name = label_file["openlabel"]["frames"][image]["frame_properties"]["streams"]["FC1"]["uri"][:-4]
+    img_original = cv2.imread(f"input/images/{img_original_name}.jpg")
+
+    #set output paths for current image
+    label_output_path = f"output/labels/{img_original_name}.txt"
+    img_output_path = f"output/images/{img_original_name}.jpg"
 
     #getting dimensions of original image
     height_original, width_original, c = img_original.shape
@@ -29,7 +33,8 @@ for image in label_file["openlabel"]["frames"]:
         overlay_bool = random.choice([True, False])                    #add False after loop is done
         if(overlay_bool):
             #choosing random bulb to overlay
-            random_overlay_bulb = bulb_list[random.randint(0, 2)]      #adjust depending on number of bulb images
+            overlay_bulb_id = random.randint(0, 2)
+            random_overlay_bulb = bulb_list[overlay_bulb_id]      #adjust depending on number of bulb images
             
             #getting position to overlay from label_file
             coordinates = label_file["openlabel"]["frames"][image]["objects"][inactive_bulb]["object_data"]["bbox"][0]["val"]
@@ -49,6 +54,12 @@ for image in label_file["openlabel"]["frames"]:
 
             #overlaying image
             img_original = cvzone.overlayPNG(img_original, resized_overlay_bulb, [width_start, height_start])
+
+            #create label file for augmented image
+            with open(label_output_path, "a") as new_label_file:
+                new_label_file.write(f"{overlay_bulb_id} {width_start} {height_start} {width_end} {height_end}\n")
+
+        cv2.imwrite(img_output_path, img_original)
 
 
 
