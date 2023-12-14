@@ -28,7 +28,7 @@ for image in label_file["openlabel"]["frames"]:
     height_original, width_original, c = img_original.shape
     
     #loop through all inactive bulbs
-    for inactive_bulb in label_file["openlabel"]["frames"]["0"]["objects"]:
+    for inactive_bulb in label_file["openlabel"]["frames"][image]["objects"]:
         #choosing randomly which bulb to overlay
         overlay_bool = random.choice([True, False])                    #add False after loop is done
         if(overlay_bool):
