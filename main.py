@@ -3,16 +3,17 @@ import cv2
 import cvzone
 import random
 import json
+import os
 
 #reading label file
 with open("input/labels/test_json.json", "r") as file_path:
     label_file = json.load(file_path)
 
 #reading all overlay bulbs
-img_red_bulb = cv2.imread("bulb_images/red_bulb.png", cv2.IMREAD_UNCHANGED)
-img_yellow_bulb = cv2.imread("bulb_images/yellow_bulb.png", cv2.IMREAD_UNCHANGED)
-img_green_bulb = cv2.imread("bulb_images/green_bulb.png", cv2.IMREAD_UNCHANGED)
-bulb_list = [img_red_bulb, img_yellow_bulb, img_green_bulb]     #adjust depending on number of bulb images
+overlay_bulb_list = []
+for overlay_bulb_file in os.listdir("bulb_images"):
+    current_overlay_bulb = cv2.imread(f"bulb_images/{overlay_bulb_file}", cv2.IMREAD_UNCHANGED)
+    overlay_bulb_list.append(current_overlay_bulb)
 
 #loop through all images
 for image in label_file["openlabel"]["frames"]:
@@ -30,11 +31,11 @@ for image in label_file["openlabel"]["frames"]:
     #loop through all inactive bulbs
     for inactive_bulb in label_file["openlabel"]["frames"][image]["objects"]:
         #choosing randomly which bulb to overlay
-        overlay_bool = random.choice([True, False])                    #add False after loop is done
+        overlay_bool = random.choice([True, False])                    
         if(overlay_bool):
             #choosing random bulb to overlay
-            overlay_bulb_id = random.randint(0, 2)
-            random_overlay_bulb = bulb_list[overlay_bulb_id]      #adjust depending on number of bulb images
+            overlay_bulb_id = random.randint(0, (len(overlay_bulb_list)-1))
+            random_overlay_bulb = overlay_bulb_list[overlay_bulb_id]      
             
             #getting position to overlay from label_file
             coordinates = label_file["openlabel"]["frames"][image]["objects"][inactive_bulb]["object_data"]["bbox"][0]["val"]
@@ -60,9 +61,3 @@ for image in label_file["openlabel"]["frames"]:
                 new_label_file.write(f"{overlay_bulb_id} {width_start} {height_start} {width_end} {height_end}\n")
 
         cv2.imwrite(img_output_path, img_original)
-
-
-
-
-cv2.imshow("Image", img_original)
-cv2.waitKey(0)
