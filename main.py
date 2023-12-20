@@ -5,14 +5,24 @@ import random
 import json
 import os
 
+#clear output directories
+output_dirs = ["images", "labels"]
+for output_dir in output_dirs:
+    output_dir_path = f"output/{output_dir}"
+    old_files = os.listdir(output_dir_path)
+    for old_file in old_files:
+        old_file_path = os.path.join(output_dir_path, old_file)
+        if os.path.isfile(old_file_path):
+            os.remove(old_file_path)
+
 #reading label file
 with open("input/labels/test_json.json", "r") as file_path:
     label_file = json.load(file_path)
 
 #reading all overlay bulbs
 overlay_bulb_list = []
-for overlay_bulb_file in os.listdir("bulb_images"):
-    current_overlay_bulb = cv2.imread(f"bulb_images/{overlay_bulb_file}", cv2.IMREAD_UNCHANGED)
+for overlay_bulb_file in os.listdir("input/bulb_images"):
+    current_overlay_bulb = cv2.imread(f"input/bulb_images/{overlay_bulb_file}", cv2.IMREAD_UNCHANGED)
     overlay_bulb_list.append(current_overlay_bulb)
 
 #loop through all images
