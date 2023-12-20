@@ -5,7 +5,6 @@ import random
 import json
 import os
 
-
 def main():
     output_dirs = ["images", "labels"] #clear output directories
     clear_output(output_dirs)
