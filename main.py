@@ -9,7 +9,7 @@ def main():
     output_dirs = ["images", "labels"] #clear output directories
     clear_output(output_dirs)
     
-    with open("input/labels/test_json.json", "r") as file_path:  #reading label file
+    with open("input/labels/olf/inactiveBulbsOLF", "r") as file_path:  #reading label file
         label_file = json.load(file_path)
 
     overlay_bulb_list = read_overlay_bulbs(overlay_bulb_list = [])
